@@ -31,7 +31,7 @@ resource "grafana_synthetic_monitoring_check" "synthetic_monitoring_checks" {
   for_each = var.endpoints
 
   enabled   = true
-  frequency = try(each.value.frequency, 300000) # Default to 5 minutes
+  frequency = local.recommended_interval_ms
   job       = try(each.value.job, "http")      # Default to http
   target    = each.value.target
 
