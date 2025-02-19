@@ -9,11 +9,14 @@ locals {
   executions_per_day       = local.executions_per_check / local.number_days_in_month
   execution_interval       = local.number_minutes_in_day / local.executions_per_day
 
-  # Workaround to round execution_interval to the nearest rounding_factor_minutes
-  execution_interval_rounded = floor((local.execution_interval + (local.rounding_factor_minutes / 2)) / local.rounding_factor_minutes) * local.rounding_factor_minutes
+  # Round to nearest rounding_factor_minutes, ensuring it's at least 1 minute
+  execution_interval_rounded = max(
+    floor((local.execution_interval + (local.rounding_factor_minutes / 2)) / local.rounding_factor_minutes) * local.rounding_factor_minutes,
+    1
+  )
 
-  # Convert to milliseconds
-  recommended_interval_ms  = local.execution_interval_rounded * 60 * 1000
+  # Convert to milliseconds, ensuring it's at least 1 minute (60,000 ms)
+  recommended_interval_ms  = max(local.execution_interval_rounded * 60 * 1000, 60000)
 }
 
 output "executions_per_check" {
@@ -31,10 +34,10 @@ output "execution_interval_minutes" {
 
 output "rounded_interval_minutes" {
   value       = local.execution_interval_rounded
-  description = "Recommended execution interval rounded to the nearest 5 minutes"
+  description = "Recommended execution interval rounded to the nearest 5 minutes (minimum 1 minute)"
 }
 
 output "recommended_interval_ms" {
   value       = local.recommended_interval_ms
-  description = "Recommended execution interval in milliseconds"
+  description = "Recommended execution interval in milliseconds (minimum 60,000 ms)"
 }
