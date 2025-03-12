@@ -34,6 +34,7 @@ resource "grafana_synthetic_monitoring_check" "synthetic_monitoring_checks" {
   frequency = local.recommended_interval_ms
   job       = try(each.value.job, "http")      # Default to http
   target    = each.value.target
+  timeout   = try(each.value.timeout, 3000)
 
   probes = try(each.value.probe_locations, [data.grafana_synthetic_monitoring_probes.grafana_probe_locations.probes.London]) # Default to all probes
 

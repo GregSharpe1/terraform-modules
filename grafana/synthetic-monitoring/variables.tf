@@ -3,6 +3,7 @@ variable "endpoints" {
   type = map(object({
     frequency = optional(number, 300000) # Default frequency to 5minutes if not provided
     job       = optional(string, "http") # Default job type
+    timeout   = optional(number, 3000)
     target    = string
     settings  = optional(map(object({
       http = map(any)
